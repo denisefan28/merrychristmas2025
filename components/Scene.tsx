@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Environment, Stars, Sparkles, ContactShadows } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette, Noise } from '@react-three/postprocessing';
 import { TreeParticles } from './TreeParticles';
@@ -8,6 +8,17 @@ import { ThemeConfig, TreeMorphState } from '../types';
 import { generateParticles } from '../services/geometryService';
 import * as THREE from 'three';
 
+// Simplified post-processing component
+const PostProcessingEffects: React.FC = () => {
+  return (
+    <EffectComposer>
+      <Bloom luminanceThreshold={1} mipmapBlur intensity={1.5} radius={0.4} />
+      <Vignette eskil={false} offset={0.1} darkness={1.1} />
+      <Noise opacity={0.02} />
+    </EffectComposer>
+  );
+};
+
 interface SceneProps {
   theme: ThemeConfig;
   morphState: TreeMorphState;
@@ -15,7 +26,7 @@ interface SceneProps {
 
 export const Scene: React.FC<SceneProps> = ({ theme, morphState }) => {
   // Generate particles when theme changes
-  const [particles, setParticles] = useState(() => 
+  const [particles, setParticles] = useState(() =>
     generateParticles(theme.primaryColor, theme.secondaryColor, theme.leafColor)
   );
 
@@ -24,7 +35,18 @@ export const Scene: React.FC<SceneProps> = ({ theme, morphState }) => {
   }, [theme]);
 
   return (
-    <Canvas shadows dpr={[1, 2]} gl={{ antialias: false }}>
+    <Canvas
+      shadows
+      dpr={[1, 2]}
+      frameloop="always"
+      gl={{
+        antialias: true,
+        alpha: true,
+        stencil: true,
+        depth: true,
+        powerPreference: 'high-performance'
+      }}
+    >
       <PerspectiveCamera makeDefault position={[0, 0, 35]} fov={50} />
       
       {/* Cinematic Lighting */}
@@ -57,11 +79,7 @@ export const Scene: React.FC<SceneProps> = ({ theme, morphState }) => {
       </group>
 
       {/* Post Processing for Luxury Feel */}
-      <EffectComposer disableNormalPass>
-        <Bloom luminanceThreshold={1} mipmapBlur intensity={1.5} radius={0.4} />
-        <Vignette eskil={false} offset={0.1} darkness={1.1} />
-        <Noise opacity={0.02} />
-      </EffectComposer>
+      <PostProcessingEffects />
 
       <OrbitControls 
         enablePan={false} 
