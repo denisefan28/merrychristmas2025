@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signature Interactive Christmas Tree</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+      body { margin: 0; padding: 0; overflow: hidden; background-color: #000502; font-family: 'Lato', sans-serif; }
+      h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+      canvas { touch-action: none; }
+    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              luxury: {
+                green: '#052b18',
+                gold: '#D4AF37',
+                goldLight: '#F4CF57',
+                silver: '#C0C0C0',
+                red: '#6b0f1a',
+                black: '#0a0a0a'
+              }
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "three": "https://aistudiocdn.com/three@^0.181.2",
+    "@react-three/drei": "https://aistudiocdn.com/@react-three/drei@^10.7.7",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "@react-three/fiber": "https://aistudiocdn.com/@react-three/fiber@^9.4.2",
+    "@react-three/postprocessing": "https://aistudiocdn.com/@react-three/postprocessing@^3.0.4",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "maath": "https://aistudiocdn.com/maath@^0.10.8"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
