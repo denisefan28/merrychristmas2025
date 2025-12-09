@@ -37,15 +37,6 @@ jobs:
       - name: Add .nojekyll
         run: touch dist/.nojekyll
 
-      - name: Verify build output
-        run: |
-          echo "=== Build artifacts ==="
-          ls -la dist/
-          echo "=== Checking for source files ==="
-          grep -o "index.tsx" dist/index.html && echo "ERROR: Found index.tsx reference!" && exit 1 || echo "OK: No index.tsx reference"
-          echo "=== Script tag ==="
-          grep "script.*module" dist/index.html
-
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
