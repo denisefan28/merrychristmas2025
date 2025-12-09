@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Environment, Stars, Sparkles, ContactShadows } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette, Noise } from '@react-three/postprocessing';
@@ -8,8 +8,23 @@ import { ThemeConfig, TreeMorphState } from '../types';
 import { generateParticles } from '../services/geometryService';
 import * as THREE from 'three';
 
-// Simplified post-processing component
-const PostProcessingEffects: React.FC = () => {
+// Detect if device is mobile
+const isMobileDevice = () => {
+  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+};
+
+// Mobile-optimized post-processing component
+const PostProcessingEffects: React.FC<{ isMobile: boolean }> = ({ isMobile }) => {
+  if (isMobile) {
+    // Minimal effects for mobile performance
+    return (
+      <EffectComposer>
+        <Bloom luminanceThreshold={1.2} intensity={0.8} radius={0.3} />
+      </EffectComposer>
+    );
+  }
+
+  // Full effects for desktop
   return (
     <EffectComposer>
       <Bloom luminanceThreshold={1} mipmapBlur intensity={1.5} radius={0.4} />
@@ -25,26 +40,39 @@ interface SceneProps {
 }
 
 export const Scene: React.FC<SceneProps> = ({ theme, morphState }) => {
+  // Detect mobile device
+  const isMobile = useMemo(() => isMobileDevice(), []);
+
+  // Performance settings based on device
+  const performanceSettings = useMemo(() => ({
+    dpr: isMobile ? [1, 1.5] : [1, 2],
+    antialias: !isMobile,
+    shadows: !isMobile,
+    starsCount: isMobile ? 1000 : 5000,
+    sparklesCount: isMobile ? 50 : 200,
+    powerPreference: isMobile ? 'default' : 'high-performance',
+  }), [isMobile]);
+
   // Generate particles when theme changes
   const [particles, setParticles] = useState(() =>
-    generateParticles(theme.primaryColor, theme.secondaryColor, theme.leafColor)
+    generateParticles(theme.primaryColor, theme.secondaryColor, theme.leafColor, isMobile)
   );
 
   useEffect(() => {
-    setParticles(generateParticles(theme.primaryColor, theme.secondaryColor, theme.leafColor));
-  }, [theme]);
+    setParticles(generateParticles(theme.primaryColor, theme.secondaryColor, theme.leafColor, isMobile));
+  }, [theme, isMobile]);
 
   return (
     <Canvas
-      shadows
-      dpr={[1, 2]}
+      shadows={performanceSettings.shadows}
+      dpr={performanceSettings.dpr}
       frameloop="always"
       gl={{
-        antialias: true,
+        antialias: performanceSettings.antialias,
         alpha: true,
         stencil: true,
         depth: true,
-        powerPreference: 'high-performance'
+        powerPreference: performanceSettings.powerPreference as 'high-performance' | 'low-power' | 'default'
       }}
     >
       <PerspectiveCamera makeDefault position={[0, 0, 35]} fov={50} />
@@ -63,11 +91,11 @@ export const Scene: React.FC<SceneProps> = ({ theme, morphState }) => {
       <pointLight position={[-10, -10, -10]} intensity={1} color={theme.secondaryColor} />
 
       {/* Environment for Reflections */}
-      <Environment preset="city" environmentIntensity={0.5} />
-      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-      
+      {!isMobile && <Environment preset="city" environmentIntensity={0.5} />}
+      <Stars radius={100} depth={50} count={performanceSettings.starsCount} factor={4} saturation={0} fade speed={1} />
+
       {/* Floating Sparkles in Background */}
-      <Sparkles count={200} scale={30} size={4} speed={0.4} opacity={0.5} color={theme.secondaryColor} />
+      <Sparkles count={performanceSettings.sparklesCount} scale={30} size={isMobile ? 3 : 4} speed={0.4} opacity={0.5} color={theme.secondaryColor} />
 
       {/* Main Content */}
       <group position={[0, -5, 0]}>
@@ -79,16 +107,24 @@ export const Scene: React.FC<SceneProps> = ({ theme, morphState }) => {
       </group>
 
       {/* Post Processing for Luxury Feel */}
-      <PostProcessingEffects />
+      <PostProcessingEffects isMobile={isMobile} />
 
-      <OrbitControls 
-        enablePan={false} 
-        minPolarAngle={Math.PI / 4} 
+      <OrbitControls
+        enablePan={false}
+        enableZoom={isMobile}
+        enableDamping={true}
+        dampingFactor={0.05}
+        rotateSpeed={isMobile ? 0.5 : 1}
+        minPolarAngle={Math.PI / 4}
         maxPolarAngle={Math.PI / 1.8}
         minDistance={10}
         maxDistance={50}
-        autoRotate={morphState === TreeMorphState.TREE_SHAPE}
+        autoRotate={morphState === TreeMorphState.TREE_SHAPE && !isMobile}
         autoRotateSpeed={0.5}
+        touches={{
+          ONE: THREE.TOUCH.ROTATE,
+          TWO: THREE.TOUCH.DOLLY_PAN
+        }}
       />
     </Canvas>
   );

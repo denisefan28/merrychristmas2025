@@ -46,12 +46,21 @@ const getTreePoint = (height: number, baseRadius: number, biasOutwards = 0.8): T
   );
 };
 
-export const generateParticles = (themePrimary: string, themeSecondary: string, themeLeaf: string): ParticleData[] => {
+export const generateParticles = (
+  themePrimary: string,
+  themeSecondary: string,
+  themeLeaf: string,
+  isMobile: boolean = false
+): ParticleData[] => {
   const particles: ParticleData[] = [];
   let idCounter = 0;
 
+  // Reduce particle count on mobile for better performance
+  const leafCount = isMobile ? Math.floor(PARTICLE_COUNT_LEAVES / 2) : PARTICLE_COUNT_LEAVES;
+  const ornamentCount = isMobile ? Math.floor(PARTICLE_COUNT_ORNAMENTS / 2) : PARTICLE_COUNT_ORNAMENTS;
+
   // 1. Leaves
-  for (let i = 0; i < PARTICLE_COUNT_LEAVES; i++) {
+  for (let i = 0; i < leafCount; i++) {
     const treePos = getTreePoint(TREE_HEIGHT, TREE_RADIUS_BASE, 0.6);
     const scatterPos = getRandomSpherePoint(SCATTER_RADIUS);
     
@@ -70,7 +79,7 @@ export const generateParticles = (themePrimary: string, themeSecondary: string, 
   }
 
   // 2. Ornaments
-  for (let i = 0; i < PARTICLE_COUNT_ORNAMENTS; i++) {
+  for (let i = 0; i < ornamentCount; i++) {
     const treePos = getTreePoint(TREE_HEIGHT, TREE_RADIUS_BASE, 0.95); // Mostly on surface
     const scatterPos = getRandomSpherePoint(SCATTER_RADIUS);
     
