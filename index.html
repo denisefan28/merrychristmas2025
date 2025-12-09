@@ -11,13 +11,21 @@
         margin: 0;
         padding: 0;
         overflow: hidden;
-        background-color: #000502;
+        background-color: #0a1a10;
         font-family: 'Lato', sans-serif;
         -webkit-tap-highlight-color: transparent;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         user-select: none;
       }
+
+      /* Lighter background on mobile for better visibility */
+      @media (max-width: 768px) {
+        body {
+          background-color: #1a2520;
+        }
+      }
+
       h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
       canvas {
         touch-action: none;

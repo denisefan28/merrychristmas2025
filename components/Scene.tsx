@@ -16,10 +16,10 @@ const isMobileDevice = () => {
 // Mobile-optimized post-processing component
 const PostProcessingEffects: React.FC<{ isMobile: boolean }> = ({ isMobile }) => {
   if (isMobile) {
-    // Minimal effects for mobile performance
+    // Brighter effects for mobile visibility
     return (
       <EffectComposer>
-        <Bloom luminanceThreshold={1.2} intensity={0.8} radius={0.3} />
+        <Bloom luminanceThreshold={0.8} intensity={1.2} radius={0.4} />
       </EffectComposer>
     );
   }
@@ -77,18 +77,19 @@ export const Scene: React.FC<SceneProps> = ({ theme, morphState }) => {
     >
       <PerspectiveCamera makeDefault position={[0, 0, 35]} fov={50} />
       
-      {/* Cinematic Lighting */}
-      <ambientLight intensity={0.2} color={theme.ambientLight} />
-      <spotLight 
-        position={[20, 30, 20]} 
-        angle={0.2} 
-        penumbra={1} 
-        intensity={2} 
-        castShadow 
+      {/* Cinematic Lighting - Brighter on mobile */}
+      <ambientLight intensity={isMobile ? 0.6 : 0.2} color={theme.ambientLight} />
+      <spotLight
+        position={[20, 30, 20]}
+        angle={0.2}
+        penumbra={1}
+        intensity={isMobile ? 3.5 : 2}
+        castShadow
         shadow-bias={-0.0001}
         color={theme.primaryColor}
       />
-      <pointLight position={[-10, -10, -10]} intensity={1} color={theme.secondaryColor} />
+      <pointLight position={[-10, -10, -10]} intensity={isMobile ? 2 : 1} color={theme.secondaryColor} />
+      {isMobile && <pointLight position={[0, 0, 20]} intensity={1.5} color="#ffffff" />}
 
       {/* Environment for Reflections */}
       {!isMobile && <Environment preset="city" environmentIntensity={0.5} />}
