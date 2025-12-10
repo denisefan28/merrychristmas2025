@@ -149,13 +149,13 @@ export const TreeParticles: React.FC<TreeParticlesProps> = ({ particles, morphSt
       {/* Spheres - Shiny Ornaments */}
       <instancedMesh ref={spheresRef} args={[undefined, undefined, spheres.length]} castShadow receiveShadow>
         <sphereGeometry args={[0.3, 16, 16]} />
-        <meshStandardMaterial roughness={0.1} metalness={0.9} envMapIntensity={1.5} toneMapped={false}  />
+        <meshStandardMaterial roughness={0.1} metalness={0.9} envMapIntensity={1.5} toneMapped={false} />
       </instancedMesh>
 
       {/* Boxes - Gift boxes */}
       <instancedMesh ref={boxesRef} args={[undefined, undefined, boxes.length]} castShadow receiveShadow>
         <boxGeometry args={[0.5, 0.5, 0.5]} />
-        <meshStandardMaterial roughness={0.2} metalness={0.6} toneMapped={false}/>
+        <meshStandardMaterial roughness={0.2} metalness={0.6} toneMapped={false} />
       </instancedMesh>
     </group>
   );
