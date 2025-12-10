@@ -94,7 +94,8 @@ export const Scene: React.FC<SceneProps> = ({ theme, morphState }) => {
       <pointLight position={[-10, -10, -10]} intensity={1} color={theme.secondaryColor} />
 
       {/* Environment for Reflections */}
-      {!isMobile && <Environment preset="city" environmentIntensity={0.5} />}
+      {/* {!isMobile && <Environment preset="city" environmentIntensity={0.5} />} */}
+      <Environment preset="city" environmentIntensity={isMobile ? 0.2 : 0.5} />
       <Stars radius={100} depth={50} count={performanceSettings.starsCount} factor={4} saturation={0} fade speed={1} />
 
       {/* Floating Sparkles in Background */}
