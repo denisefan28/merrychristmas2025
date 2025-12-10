@@ -74,8 +74,8 @@ export const Scene: React.FC<SceneProps> = ({ theme, morphState }) => {
         depth: true,
         outputColorSpace: THREE.SRGBColorSpace,
         toneMapping: THREE.NoToneMapping,
-        powerPreference: performanceSettings.powerPreference
-        // powerPreference: performanceSettings.powerPreference as 'high-performance' | 'low-power' | 'default'
+        // powerPreference: performanceSettings.powerPreference
+        powerPreference: performanceSettings.powerPreference as 'high-performance' | 'low-power' | 'default'
       }}
     >
       <PerspectiveCamera makeDefault position={[0, 0, 35]} fov={50} />
